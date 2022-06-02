@@ -26,6 +26,10 @@ export class UserService {
         );
     }
 
+    async getByEmail(email: string): Promise<User> {
+        return await this.userRepository.findOneBy({ email });
+    }
+
     async save(input: UserInputDTO): Promise<UserOutputDTO> {
         const user = await UserInputDTO.toEntity(input);
         return UserOutputDTO.fromUser(
