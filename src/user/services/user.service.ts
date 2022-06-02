@@ -33,9 +33,9 @@ export class UserService {
         );
     }
 
-    async update(input: UserUpdateDTO): Promise<UserOutputDTO> {
+    async update(id: number, input: UserUpdateDTO): Promise<UserOutputDTO> {
         const user = {
-            ...input,
+            ...(await this.userRepository.findOneBy({ id })),
             ...(await UserUpdateDTO.toEntity(input)),
         }
 
