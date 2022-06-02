@@ -7,23 +7,23 @@ export class User {
     id: number;
 
     @Column()
-    name: String;
+    name: string;
 
     @Column()
-    address: String;
+    address: string;
 
     @Column()
-    logiImg: String;
+    logoImg: string;
 
     @Column()
-    email: String;
+    email: string;
 
     @Column()
-    password: String;
+    password: string;
 
     @Column()
-    phone: String;
+    phone: string;
 
     @Column({ type: 'enum', enum: UserTypeEnum })
-    userType: UserTypeEnum
+    userType: UserTypeEnum;
 }
