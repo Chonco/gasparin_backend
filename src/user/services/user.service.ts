@@ -4,11 +4,14 @@ import { UserOutputDTO } from '../dtos/user-output.dto';
 import { User } from '../models/user.model';
 import { UserInputDTO } from '../dtos/user-input.dto';
 import { UserUpdateDTO } from '../dtos/user-update.dto';
+import { ConfigService } from '@nestjs/config';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class UserService {
     constructor(
-        private dataSource: DataSource
+        private dataSource: DataSource,
+        private configService: ConfigService
     ) { }
 
     async getAll(): Promise<UserOutputDTO[]> {
@@ -31,6 +34,11 @@ export class UserService {
     }
 
     async save(input: UserInputDTO): Promise<UserOutputDTO> {
+        input.password = await hash(
+            input.password,
+            parseInt(this.configService.get('encrypt.roundsToHash'))
+        );
+
         const user = await UserInputDTO.toEntity(input);
         return UserOutputDTO.fromUser(
             await this.dataSource.getRepository(User)
@@ -39,6 +47,11 @@ export class UserService {
     }
 
     async update(id: number, input: UserUpdateDTO): Promise<UserOutputDTO> {
+        input.password = await hash(
+            input.password,
+            parseInt(this.configService.get('encrypt.roundsToHash'))
+        );
+
         const user = {
             ...(await this.dataSource.getRepository(User).findOneBy({ id })),
             ...(await UserUpdateDTO.toEntity(input)),
