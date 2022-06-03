@@ -5,11 +5,12 @@ import { AppService } from './app.service';
 import configuration from './config/configuration';
 import { SharedModule } from './shared/shared.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [SharedModule, ConfigModule.forRoot({
     load: [configuration]
-  }), UserModule],
+  }), UserModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

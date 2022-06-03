@@ -3,22 +3,18 @@ import { IsEmail, IsInt, IsNotEmpty, IsNumber, IsString, MinLength } from "class
 import { User } from '../models/user.model';
 
 export class UserUpdateDTO {
-    @IsString()
     @IsNotEmpty()
     address: string;
 
-    @IsString()
     @IsNotEmpty()
     logoImg: string;
 
     @IsEmail()
     email: string;
 
-    @IsString()
     @IsNotEmpty()
     phone: string;
 
-    @IsString()
     @MinLength(8)
     password: string;
 
@@ -29,10 +25,7 @@ export class UserUpdateDTO {
         user.logoImg = input.logoImg;
         user.email = input.email;
         user.phone = input.phone;
-        user.password = await hash(
-            input.password,
-            parseInt(process.env.ROUNDS_TO_HASH)
-        );
+        user.password = input.password;
 
         return user;
     }

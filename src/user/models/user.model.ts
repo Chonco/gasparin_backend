@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 import { UserTypeEnum } from "../constants/user-type.enum";
 
 @Entity()
+@Index('user_indexes', ['id', 'email'])
 export class User {
     @PrimaryGeneratedColumn()
     id: number;

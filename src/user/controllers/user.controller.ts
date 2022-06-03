@@ -3,6 +3,7 @@ import { UserOutputDTO } from '../dtos/user-output.dto';
 import { UserService } from '../services/user.service';
 import { UserInputDTO } from '../dtos/user-input.dto';
 import { UserUpdateDTO } from '../dtos/user-update.dto';
+import { Public } from '../../config/public.key';
 
 @Controller('user')
 export class UserController {
@@ -21,6 +22,7 @@ export class UserController {
     }
 
     @Post()
+    @Public()
     @HttpCode(HttpStatus.CREATED)
     async add(@Body() user: UserInputDTO): Promise<UserOutputDTO> {
         return await this.service.save(user);

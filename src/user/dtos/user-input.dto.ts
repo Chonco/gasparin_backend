@@ -1,30 +1,24 @@
-import { hash } from "bcrypt";
-import { IsEmail, IsEnum, IsNotEmpty, IsString, MinLength } from "class-validator";
+import { IsEmail, IsEnum, IsNotEmpty, IsString, Length, MaxLength, MinLength } from "class-validator";
 import { UserTypeEnum } from "../constants/user-type.enum";
 import { User } from "../models/user.model";
 
 export class UserInputDTO {
-    @IsString()
     @IsNotEmpty()
     name: string;
 
-    @IsString()
     @IsNotEmpty()
     address: string;
 
-    @IsString()
     @IsNotEmpty()
     logoImg: string;
 
     @IsEmail()
     email: string;
 
-    @IsString()
     @MinLength(8)
     password: string;
 
-    @IsString()
-    @IsNotEmpty()
+    @Length(10, 10)
     phone: string;
 
     @IsEnum(UserTypeEnum)
@@ -36,10 +30,7 @@ export class UserInputDTO {
         user.address = userDTO.address;
         user.logoImg = userDTO.logoImg;
         user.email = userDTO.email;
-        user.password = await hash(
-            userDTO.password,
-            parseInt(process.env.ROUNDS_TO_HASH)
-        );
+        user.password = userDTO.password;
         user.phone = userDTO.phone;
         user.userType = userDTO.userType;
 
