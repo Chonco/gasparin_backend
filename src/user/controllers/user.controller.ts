@@ -4,6 +4,8 @@ import { UserService } from '../services/user.service';
 import { UserInputDTO } from '../dtos/user-input.dto';
 import { UserUpdateDTO } from '../dtos/user-update.dto';
 import { Public } from '../../config/public.key';
+import { ReqContext } from 'src/shared/request-context/request-context.decorator';
+import { RequestContext } from '../../shared/request-context/request-context.dto';
 
 @Controller('user')
 export class UserController {
