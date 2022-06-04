@@ -1,17 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { BadRequestException, Injectable, HttpStatus, HttpException } from '@nestjs/common';
+import { DataSource, QueryFailedError } from 'typeorm';
 import { UserOutputDTO } from '../dtos/user-output.dto';
 import { User } from '../models/user.model';
 import { UserInputDTO } from '../dtos/user-input.dto';
 import { UserUpdateDTO } from '../dtos/user-update.dto';
 import { ConfigService } from '@nestjs/config';
 import { hash } from 'bcrypt';
+import { RestaurantSearchDTO } from '../dtos/restaurant-search.dto';
+import { FoodTypeService } from './food-type.service';
+import { UserTypeEnum } from '../constants/user-type.enum';
 
 @Injectable()
 export class UserService {
     constructor(
         private dataSource: DataSource,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private foodTypeService: FoodTypeService
     ) { }
 
     async getAll(): Promise<UserOutputDTO[]> {
@@ -39,11 +43,30 @@ export class UserService {
             parseInt(this.configService.get('encrypt.roundsToHash'))
         );
 
-        const user = await UserInputDTO.toEntity(input);
-        return UserOutputDTO.fromUser(
-            await this.dataSource.getRepository(User)
-                .save(user)
-        );
+        const parsed = await UserInputDTO.toEntity(input);
+
+        if (parsed.userType == UserTypeEnum.RESTAURANT) {
+            parsed.foodType = await this.foodTypeService.getOrCreate(input.foodType);
+        }
+
+        try {
+            return UserOutputDTO.fromUser(
+                await this.dataSource.getRepository(User)
+                    .save(parsed)
+            );
+        } catch (error) {
+            if (error.code == 'ER_DUP_ENTRY') {
+                throw new BadRequestException(
+                    {
+                        statusCode: HttpStatus.CONFLICT,
+                        message: 'Email already in use'
+                    });
+            }
+            throw new HttpException(
+                "Unkwnown Error",
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     async update(id: number, input: UserUpdateDTO): Promise<UserOutputDTO> {
@@ -65,5 +88,21 @@ export class UserService {
 
     async remove(id: number) {
         await this.dataSource.getRepository(User).delete(id);
+    }
+
+    async searchUser(input: RestaurantSearchDTO): Promise<UserOutputDTO[]> {
+        return (
+            await this.dataSource.getRepository(User)
+                .createQueryBuilder('user')
+                .leftJoinAndSelect('user.foodType', 'foodType')
+                .where('user.name LIKE :restaurantName', { restaurantName: `%${input.name}%` })
+                .where('foodType.name IN :foodTypeName', { foodTypeName: input.foodType })
+                .orderBy('user.name')
+                .skip(input.perPage * (input.currentPage))
+                .take(input.perPage)
+                .getMany()
+        ).map<UserOutputDTO>(
+            user => UserOutputDTO.fromUser(user)
+        );
     }
 }

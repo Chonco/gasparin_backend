@@ -9,6 +9,7 @@ export class UserOutputDTO {
     email: string;
     phone: string;
     userType: UserTypeEnum;
+    foodType?: string;
 
     static fromUser(user: User): UserOutputDTO {
         const dto = new UserOutputDTO();
@@ -20,6 +21,10 @@ export class UserOutputDTO {
         dto.email = user.email;
         dto.phone = user.phone;
         dto.userType = user.userType;
+
+        if (dto.userType == UserTypeEnum.RESTAURANT) {
+            dto.foodType = user.foodType.name;
+        }
 
         return dto;
     }
