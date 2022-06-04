@@ -6,11 +6,12 @@ import configuration from './config/configuration';
 import { SharedModule } from './shared/shared.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { OfferModule } from './offer/offer.module';
 
 @Module({
   imports: [SharedModule, ConfigModule.forRoot({
     load: [configuration]
-  }), UserModule, AuthModule],
+  }), UserModule, AuthModule, OfferModule],
   controllers: [AppController],
   providers: [AppService],
 })
