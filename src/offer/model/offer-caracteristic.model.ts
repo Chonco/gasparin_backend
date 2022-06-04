@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Offer } from "./offer.model";
 
 @Entity()
-export class OfferCaracteristic {
+export class OfferCharacteristic {
     @PrimaryGeneratedColumn()
     id: number;
 

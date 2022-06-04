@@ -1,12 +1,19 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
 import { OfferImage } from "./offer-images.model";
 import { OfferCategory } from './offer-category.model';
-import { OfferCaracteristic } from './offer-caracteristic.model';
+import { OfferCharacteristic } from './offer-caracteristic.model';
+import { User } from '../../user/models/user.model';
 
 @Entity()
 export class Offer {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @ManyToOne(() => User, user => user.incomingOffer)
+    restaurant: User;
+
+    @ManyToOne(() => User, user => user.offeredOffer)
+    seller: User;
 
     @Column()
     name: string;
@@ -24,13 +31,14 @@ export class Offer {
     )
     images: OfferImage[];
 
-    @ManyToMany(() => OfferCategory)
+    @ManyToMany(() => OfferCategory, { eager: true })
     @JoinTable()
     categories: OfferCategory[];
 
     @OneToMany(
-        () => OfferCaracteristic,
-        offerCaracteristic => offerCaracteristic.offer
+        () => OfferCharacteristic,
+        offerCharacteristic => offerCharacteristic.offer,
+        { eager: true }
     )
-    caracteristics: OfferCaracteristic[]
+    caracteristics: OfferCharacteristic[]
 }

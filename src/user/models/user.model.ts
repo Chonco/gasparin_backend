@@ -1,6 +1,7 @@
-import { Column, Entity, Index, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserTypeEnum } from "../constants/user-type.enum";
 import { FoodType } from './food-type.model';
+import { Offer } from '../../offer/model/offer.model';
 
 @Entity()
 @Index('user_indexes', ['id', 'email'])
@@ -35,4 +36,10 @@ export class User {
         { nullable: true }
     )
     foodType: Promise<FoodType>;
+    
+    @OneToMany(() => Offer, offer => offer.restaurant)
+    incomingOffer: Offer;
+
+    @OneToMany(() => Offer, offer => offer.seller)
+    offeredOffer: Offer;
 }
