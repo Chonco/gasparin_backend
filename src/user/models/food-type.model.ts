@@ -11,5 +11,5 @@ export class FoodType {
     name: string;
 
     @OneToMany(() => User, user => user.foodType)
-    users: User[];
+    users: Promise<User[]>;
 }

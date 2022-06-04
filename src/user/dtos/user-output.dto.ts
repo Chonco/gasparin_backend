@@ -11,7 +11,7 @@ export class UserOutputDTO {
     userType: UserTypeEnum;
     foodType?: string;
 
-    static fromUser(user: User): UserOutputDTO {
+    static async fromUser(user: User): Promise<UserOutputDTO> {
         const dto = new UserOutputDTO();
 
         dto.id = user.id;
@@ -23,7 +23,8 @@ export class UserOutputDTO {
         dto.userType = user.userType;
 
         if (dto.userType == UserTypeEnum.RESTAURANT) {
-            dto.foodType = user.foodType.name;
+            const foodType = await user.foodType;
+            dto.foodType = foodType.name;
         }
 
         return dto;

@@ -1,5 +1,5 @@
-import { BadRequestException, Injectable, HttpStatus, HttpException } from '@nestjs/common';
-import { DataSource, QueryFailedError } from 'typeorm';
+import { BadRequestException, Injectable, HttpStatus, HttpException, NotFoundException } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { UserOutputDTO } from '../dtos/user-output.dto';
 import { User } from '../models/user.model';
 import { UserInputDTO } from '../dtos/user-input.dto';
@@ -19,17 +19,28 @@ export class UserService {
     ) { }
 
     async getAll(): Promise<UserOutputDTO[]> {
-        return (await this.dataSource.getRepository(User).find())
-            .map<UserOutputDTO>(
-                user => UserOutputDTO.fromUser(user)
-            );
+        const allUsers = await this.dataSource.getRepository(User).find();
+
+        const outputUsers: UserOutputDTO[] = [];
+
+        for (let index = 0; index < allUsers.length; index++) {
+            const user = allUsers[index];
+
+            outputUsers.push(await UserOutputDTO.fromUser(user))
+        }
+
+        return outputUsers;
     }
 
     async getById(id: number): Promise<UserOutputDTO> {
-        return UserOutputDTO.fromUser(
-            await this.dataSource.getRepository(User)
-                .findOneBy({ id })
-        );
+        const user = await this.dataSource.getRepository(User)
+            .findOneBy({ id });
+
+        if (!user) {
+            throw new NotFoundException();
+        }
+
+        return UserOutputDTO.fromUser(user);
     }
 
     async getByEmail(email: string): Promise<User> {
@@ -46,7 +57,10 @@ export class UserService {
         const parsed = await UserInputDTO.toEntity(input);
 
         if (parsed.userType == UserTypeEnum.RESTAURANT) {
-            parsed.foodType = await this.foodTypeService.getOrCreate(input.foodType);
+            parsed.foodType = Promise.resolve(
+                await this.foodTypeService
+                    .getOrCreate(input.foodType)
+            );
         }
 
         try {
@@ -91,18 +105,37 @@ export class UserService {
     }
 
     async searchUser(input: RestaurantSearchDTO): Promise<UserOutputDTO[]> {
-        return (
-            await this.dataSource.getRepository(User)
-                .createQueryBuilder('user')
-                .leftJoinAndSelect('user.foodType', 'foodType')
-                .where('user.name LIKE :restaurantName', { restaurantName: `%${input.name}%` })
-                .where('foodType.name IN :foodTypeName', { foodTypeName: input.foodType })
-                .orderBy('user.name')
-                .skip(input.perPage * (input.currentPage))
-                .take(input.perPage)
-                .getMany()
-        ).map<UserOutputDTO>(
-            user => UserOutputDTO.fromUser(user)
-        );
+        let queryBuilder = this.dataSource
+            .getRepository(User)
+            .createQueryBuilder('user')
+            .leftJoinAndSelect('user.foodType', 'foodType')
+            .where(
+                'user.userType = :userType AND user.name LIKE :restaurantName',
+                {
+                    userType: UserTypeEnum.RESTAURANT,
+                    restaurantName: `%${input.name}%`
+                }
+            );
+
+        if (input.foodType.length) {
+            queryBuilder = queryBuilder.andWhere(
+                'foodType.name IN (:...foodTypeName)',
+                { foodTypeName: input.foodType }
+            );
+        }
+
+        const filteredUsers = await queryBuilder
+            .skip(input.perPage * (input.currentPage))
+            .take(input.perPage)
+            .getMany();
+
+        const parsedUsers: UserOutputDTO[] = [];
+
+        for (let index = 0; index < filteredUsers.length; index++) {
+            const user = filteredUsers[index];
+            parsedUsers.push(await UserOutputDTO.fromUser(user));
+        }
+
+        return parsedUsers;
     }
 }
