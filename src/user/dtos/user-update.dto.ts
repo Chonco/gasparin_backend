@@ -1,5 +1,4 @@
-import { hash } from "bcrypt";
-import { IsEmail, IsInt, IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
 import { User } from '../models/user.model';
 
 export class UserUpdateDTO {

@@ -4,8 +4,7 @@ import { UserService } from '../services/user.service';
 import { UserInputDTO } from '../dtos/user-input.dto';
 import { UserUpdateDTO } from '../dtos/user-update.dto';
 import { Public } from '../../config/public.key';
-import { ReqContext } from 'src/shared/request-context/request-context.decorator';
-import { RequestContext } from '../../shared/request-context/request-context.dto';
+import { RestaurantSearchDTO } from '../dtos/restaurant-search.dto';
 
 @Controller('user')
 export class UserController {
@@ -21,6 +20,14 @@ export class UserController {
     @HttpCode(HttpStatus.OK)
     async getById(@Param() id: number): Promise<UserOutputDTO> {
         return await this.service.getById(id);
+    }
+
+    @Get('restaurant-search')
+    @HttpCode(HttpStatus.OK)
+    async getWithSearch(
+        @Body() searchParams: RestaurantSearchDTO
+    ): Promise<UserOutputDTO[]> {
+        return await this.service.searchUser(searchParams);
     }
 
     @Post()

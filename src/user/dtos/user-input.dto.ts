@@ -1,4 +1,11 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString, Length, MaxLength, MinLength } from "class-validator";
+import {
+    IsEmail,
+    IsEnum,
+    IsNotEmpty,
+    Length,
+    MinLength,
+    ValidateIf
+} from "class-validator";
 import { UserTypeEnum } from "../constants/user-type.enum";
 import { User } from "../models/user.model";
 
@@ -23,6 +30,12 @@ export class UserInputDTO {
 
     @IsEnum(UserTypeEnum)
     userType: UserTypeEnum;
+
+    @ValidateIf(
+        (input: UserInputDTO) => input.userType == UserTypeEnum.RESTAURANT
+    )
+    @IsNotEmpty()
+    foodType: string;
 
     static async toEntity(userDTO: UserInputDTO): Promise<User> {
         const user = new User();

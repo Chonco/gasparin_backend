@@ -1,4 +1,4 @@
-export class UserSearchDTO {
+export class RestaurantSearchDTO {
     name: string;
     currentPage: number;
     perPage = 5;
