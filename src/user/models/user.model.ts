@@ -17,7 +17,7 @@ export class User {
     @Column()
     logoImg: string;
 
-    @Column()
+    @Column({ unique: true })
     email: string;
 
     @Column()

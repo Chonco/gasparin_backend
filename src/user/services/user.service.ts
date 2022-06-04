@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { BadRequestException, Injectable, HttpStatus, HttpException } from '@nestjs/common';
+import { DataSource, QueryFailedError } from 'typeorm';
 import { UserOutputDTO } from '../dtos/user-output.dto';
 import { User } from '../models/user.model';
 import { UserInputDTO } from '../dtos/user-input.dto';
@@ -43,16 +43,30 @@ export class UserService {
             parseInt(this.configService.get('encrypt.roundsToHash'))
         );
 
-        const user = await UserInputDTO.toEntity(input);
+        const parsed = await UserInputDTO.toEntity(input);
 
-        if (user.userType == UserTypeEnum.RESTAURANT) {
-            user.foodType = await this.foodTypeService.getOrCreate(input.foodType);
+        if (parsed.userType == UserTypeEnum.RESTAURANT) {
+            parsed.foodType = await this.foodTypeService.getOrCreate(input.foodType);
         }
 
-        return UserOutputDTO.fromUser(
-            await this.dataSource.getRepository(User)
-                .save(user)
-        );
+        try {
+            return UserOutputDTO.fromUser(
+                await this.dataSource.getRepository(User)
+                    .save(parsed)
+            );
+        } catch (error) {
+            if (error.code == 'ER_DUP_ENTRY') {
+                throw new BadRequestException(
+                    {
+                        statusCode: HttpStatus.CONFLICT,
+                        message: 'Email already in use'
+                    });
+            }
+            throw new HttpException(
+                "Unkwnown Error",
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     async update(id: number, input: UserUpdateDTO): Promise<UserOutputDTO> {
