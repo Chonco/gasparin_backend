@@ -1,6 +1,25 @@
+import {
+    IsInt,
+    Min,
+    IsOptional,
+    IsString
+} from 'class-validator';
+
 export class RestaurantSearchDTO {
-    name: string;
+
+    @IsOptional()
+    @IsString()
+    name: string = "";
+
+    @IsInt()
+    @Min(0)
     currentPage: number;
+
+    @IsInt()
+    @Min(0)
     perPage = 5;
-    foodType: string[];
+
+    @IsOptional()
+    @IsString({ each: true })
+    foodType: string[] = [];
 }

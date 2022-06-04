@@ -16,18 +16,18 @@ export class UserController {
         return await this.service.getAll();
     }
 
-    @Get(':id')
-    @HttpCode(HttpStatus.OK)
-    async getById(@Param() id: number): Promise<UserOutputDTO> {
-        return await this.service.getById(id);
-    }
-
-    @Get('restaurant-search')
+    @Post('restaurant-search')
     @HttpCode(HttpStatus.OK)
     async getWithSearch(
         @Body() searchParams: RestaurantSearchDTO
     ): Promise<UserOutputDTO[]> {
         return await this.service.searchUser(searchParams);
+    }
+
+    @Get(':id')
+    @HttpCode(HttpStatus.OK)
+    async getById(@Param() id: number): Promise<UserOutputDTO> {
+        return await this.service.getById(id);
     }
 
     @Post()

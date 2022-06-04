@@ -34,5 +34,5 @@ export class User {
         foodType => foodType.users,
         { nullable: true }
     )
-    foodType: FoodType;
+    foodType: Promise<FoodType>;
 }
