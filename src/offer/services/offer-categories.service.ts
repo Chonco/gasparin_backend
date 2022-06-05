@@ -5,14 +5,14 @@ import { OfferCategory } from '../model/offer-category.model';
 @Injectable()
 export class OfferCategoriesService {
     constructor(private dataSource: DataSource) { }
-    
+
     async getOrCreate(names: string[]): Promise<OfferCategory[]> {
         const categories: OfferCategory[] = [];
         const repository = this.dataSource.getRepository(OfferCategory);
 
         for (let index = 0; index < names.length; index++) {
             const name = names[index];
-            
+
             const categoryFinded = await repository.findOneBy({ name });
 
             if (categoryFinded) {
@@ -29,5 +29,10 @@ export class OfferCategoriesService {
         }
 
         return categories;
+    }
+
+    async getAll(): Promise<OfferCategory[]> {
+        return await this.dataSource
+            .getRepository(OfferCategory).find();
     }
 }

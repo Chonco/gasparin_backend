@@ -10,6 +10,7 @@ import { UserModule } from '../user/user.module';
 import { OfferImagesService } from './services/offer-images.service';
 import { OfferCategoriesService } from './services/offer-categories.service';
 import { OfferCharacteristicsService } from './services/offer-characteristics.service';
+import { OfferCategoriesController } from './controllers/offer-categories.controller';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { OfferCharacteristicsService } from './services/offer-characteristics.se
       ])
   ],
   providers: [OfferService, OfferImagesService, OfferCategoriesService, OfferCharacteristicsService],
-  controllers: [OfferController]
+  controllers: [OfferController, OfferCategoriesController]
 })
 export class OfferModule { }
