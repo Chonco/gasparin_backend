@@ -36,7 +36,7 @@ export class OfferController {
         @ReqContext() context: RequestContext,
         @Body() searchCriteria: OfferSearchInput
     ): Promise<OfferOutput[]> {
-        return await this.service.getFiltered(context.user, searchCriteria);
+        return await this.service.getFilteredOffers(context.user, searchCriteria);
     }
 
     @Delete(':id')

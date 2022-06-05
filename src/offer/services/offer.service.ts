@@ -69,16 +69,16 @@ export class OfferService {
         );
     }
 
-    async getFiltered(
+    async getFilteredOffers(
         contextUser: UserAccessTokenClaims,
         searchCriteria: OfferSearchInput
     ): Promise<OfferOutput[]> {
         return contextUser.userType == UserTypeEnum.RESTAURANT
-            ? this.getFilteredOfRestaurant(contextUser.id, searchCriteria)
-            : this.getFilteredOfSelller(contextUser.id, searchCriteria);
+            ? this.getFilteredOffersOfRestaurant(contextUser.id, searchCriteria)
+            : this.getFilteredOffersOfSeller(contextUser.id, searchCriteria);
     }
 
-    private async getFilteredOfRestaurant(
+    private async getFilteredOffersOfRestaurant(
         restaurantId: number,
         searchCriteria: OfferSearchInput
     ): Promise<OfferOutput[]> {
@@ -88,11 +88,18 @@ export class OfferService {
             .leftJoinAndSelect('offer.seller', 'seller')
             .leftJoinAndSelect('offer.categories', 'category')
             .leftJoinAndSelect('offer.images', 'image')
-            .leftJoinAndSelect('offer.characteristics', 'characteristic')
-            .where(`(offer.name LIKE :offerName OR seller.name LIKE :sellerName)`, {
+            .leftJoinAndSelect('offer.characteristics', 'characteristic');
+
+        if (searchCriteria.openOffers) {
+            query.leftJoinAndSelect('offer.order', 'order');
+        }
+
+        query
+            .where('offer.offerAccepted = :openOffers', { openOffers: searchCriteria.openOffers })
+            .andWhere(`(offer.name LIKE :offerName OR seller.name LIKE :sellerName)`, {
                 offerName: `%${searchCriteria.name}%`,
                 sellerName: `%${searchCriteria.sellerName}%`
-            })
+            });
 
         if (searchCriteria.categories) {
             query.andWhere(`category.name IN (:...categoriesNames)`, {
@@ -108,7 +115,7 @@ export class OfferService {
         return this.getOffersAsOutputs(offers);
     }
 
-    private async getFilteredOfSelller(
+    private async getFilteredOffersOfSeller(
         sellerId: number,
         searchCriteria: OfferSearchInput
     ): Promise<OfferOutput[]> {
@@ -118,8 +125,15 @@ export class OfferService {
             .leftJoinAndSelect('offer.seller', 'seller', 'seller.id = :id', { id: sellerId })
             .leftJoinAndSelect('offer.categories', 'category')
             .leftJoinAndSelect('offer.images', 'images')
-            .leftJoinAndSelect('offer.characteristics', 'characteristics')
-            .where(`(offer.name LIKE :offerName OR restaurant.name LIKE :restaurantName)`, {
+            .leftJoinAndSelect('offer.characteristics', 'characteristics');
+
+        if (searchCriteria.openOffers) {
+            query.leftJoinAndSelect('offer.order', 'order');
+        }
+
+        query
+            .where('offer.offerAccepted = :openOffers', { openOffers: searchCriteria.openOffers })
+            .andWhere(`(offer.name LIKE :offerName OR restaurant.name LIKE :restaurantName)`, {
                 offerName: `%${searchCriteria.name}%`,
                 restaurantName: `%${searchCriteria.restaurantName}%`
             });
@@ -138,7 +152,9 @@ export class OfferService {
         return this.getOffersAsOutputs(offers);
     }
 
-    private async getOffersAsOutputs(offers: Offer[]): Promise<OfferOutput[]> {
+    private async getOffersAsOutputs(
+        offers: Offer[]
+    ): Promise<OfferOutput[]> {
         const offerOutputs: OfferOutput[] = [];
 
         for (let index = 0; index < offers.length; index++) {
