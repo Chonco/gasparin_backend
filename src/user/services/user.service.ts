@@ -43,6 +43,11 @@ export class UserService {
         return UserOutputDTO.fromUser(user);
     }
 
+    async getUnformattedUserById(id: number): Promise<User> {
+        return await this.dataSource.getRepository(User)
+            .findOneBy({ id });
+    }
+
     async getByEmail(email: string): Promise<User> {
         return await this.dataSource.getRepository(User)
             .findOneBy({ email });

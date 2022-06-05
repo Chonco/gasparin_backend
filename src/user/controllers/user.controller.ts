@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserOutputDTO } from '../dtos/user-output.dto';
 import { UserService } from '../services/user.service';
 import { UserInputDTO } from '../dtos/user-input.dto';
@@ -18,6 +18,7 @@ export class UserController {
 
     @Post('restaurant-search')
     @HttpCode(HttpStatus.OK)
+    @UsePipes(new ValidationPipe({ transform: true }))
     async getWithSearch(
         @Body() searchParams: RestaurantSearchDTO
     ): Promise<UserOutputDTO[]> {
