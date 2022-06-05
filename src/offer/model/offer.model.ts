@@ -11,16 +11,26 @@ import { OfferImage } from "./offer-images.model";
 import { OfferCategory } from './offer-category.model';
 import { OfferCharacteristic } from './offer-characteristic.model';
 import { User } from '../../user/models/user.model';
+import { Index } from 'typeorm';
 
 @Entity()
+@Index('offer_indexes', ['id', 'name'])
 export class Offer {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, user => user.incomingOffer)
+    @ManyToOne(
+        () => User,
+        user => user.incomingOffer,
+        { eager: true }
+    )
     restaurant: User;
 
-    @ManyToOne(() => User, user => user.offeredOffer)
+    @ManyToOne(
+        () => User,
+        user => user.offeredOffer,
+        { eager: true }
+    )
     seller: User;
 
     @Column()
