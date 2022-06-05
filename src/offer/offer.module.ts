@@ -5,16 +5,18 @@ import { Offer } from './model/offer.model';
 import { OfferImage } from './model/offer-images.model';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OfferCategory } from './model/offer-category.model';
-import { OfferCaracteristic } from './model/offer-caracteristic.model';
+import { OfferCharacteristic } from './model/offer-characteristic.model';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
+    UserModule,
     TypeOrmModule.forFeature(
       [
         Offer,
         OfferImage,
         OfferCategory,
-        OfferCaracteristic
+        OfferCharacteristic
       ])
   ],
   providers: [OfferService],

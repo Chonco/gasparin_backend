@@ -1,7 +1,15 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
+import {
+    Column,
+    Entity,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    ManyToMany,
+    JoinTable,
+    ManyToOne
+} from 'typeorm';
 import { OfferImage } from "./offer-images.model";
 import { OfferCategory } from './offer-category.model';
-import { OfferCharacteristic } from './offer-caracteristic.model';
+import { OfferCharacteristic } from './offer-characteristic.model';
 import { User } from '../../user/models/user.model';
 
 @Entity()
