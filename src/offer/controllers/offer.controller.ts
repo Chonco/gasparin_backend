@@ -5,7 +5,9 @@ import {
     HttpStatus,
     Body,
     Delete,
-    Param
+    Param,
+    UsePipes,
+    ValidationPipe
 } from '@nestjs/common';
 import { OfferService } from '../services/offer.service';
 import { ReqContext } from '../../shared/request-context/request-context.decorator';
@@ -27,8 +29,9 @@ export class OfferController {
         return await this.service.save(context.user.id, input);
     }
 
-    @Post('getFiltered')
+    @Post('get-filtered')
     @HttpCode(HttpStatus.OK)
+    @UsePipes(new ValidationPipe({ transform: true }))
     async getFiltered(
         @ReqContext() context: RequestContext,
         @Body() searchCriteria: OfferSearchInput

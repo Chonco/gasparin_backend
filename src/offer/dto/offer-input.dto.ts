@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { ArrayMinSize, IsArray, IsDate, IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, Min, ValidateNested, } from "class-validator";
+import { ArrayMinSize, IsArray, IsDate, IsDateString, IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, Min, ValidateNested, } from "class-validator";
 
 export class Characteristic {
     @IsNotEmpty()
@@ -17,7 +17,7 @@ export class OfferInput {
     @Min(0.1)
     price: number;
 
-    @IsDate()
+    @IsDateString()
     productionDate: Date;
 
     @IsArray()

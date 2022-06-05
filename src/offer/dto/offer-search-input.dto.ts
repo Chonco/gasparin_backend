@@ -2,21 +2,20 @@ import { ArrayNotEmpty, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'cla
 
 export class OfferSearchInput {
     @IsOptional()
-    @IsNotEmpty()
-    restaurantName: string;
+    @IsString()
+    restaurantName: string = '';
 
     @IsOptional()
-    @IsNotEmpty()
+    @IsString()
     sellerName: string = '';
 
     @IsOptional()
-    @IsNotEmpty()
+    @IsString()
     name: string = '';
 
     @IsOptional()
     @IsString({ each: true })
-    @ArrayNotEmpty()
-    categories: string[]
+    categories: string[] = [];
 
     @IsInt()
     @Min(0)

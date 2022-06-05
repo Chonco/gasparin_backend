@@ -84,25 +84,21 @@ export class OfferService {
     ): Promise<OfferOutput[]> {
         const query = this.dataSource.getRepository(Offer)
             .createQueryBuilder('offer')
-            .leftJoinAndSelect('offer.restaurant', 'restaurant')
+            .leftJoinAndSelect('offer.restaurant', 'restaurant', 'restaurant.id = :id', { id: restaurantId })
             .leftJoinAndSelect('offer.seller', 'seller')
             .leftJoinAndSelect('offer.categories', 'category')
             .leftJoinAndSelect('offer.images', 'image')
             .leftJoinAndSelect('offer.characteristics', 'characteristic')
-            .where('restaurant.id = :id', { id: restaurantId })
+            .where(`(offer.name LIKE :offerName OR seller.name LIKE :sellerName)`, {
+                offerName: `%${searchCriteria.name}%`,
+                sellerName: `%${searchCriteria.sellerName}%`
+            })
 
         if (searchCriteria.categories) {
-            query.andWhere(`category.name IN (:...categories)`, {
-                categories: searchCriteria.categories
+            query.andWhere(`category.name IN (:...categoriesNames)`, {
+                categoriesNames: searchCriteria.categories
             });
         }
-
-        query.andWhere(`
-            offer.name LIKE :offerName OR 
-            seller.name LIKE :sellerName`, {
-            offerName: searchCriteria.name,
-            sellerName: searchCriteria.sellerName
-        });
 
         const offers = await query
             .skip(searchCriteria.currentPage * searchCriteria.perPage)
@@ -119,22 +115,20 @@ export class OfferService {
         const query = this.dataSource.getRepository(Offer)
             .createQueryBuilder('offer')
             .leftJoinAndSelect('offer.restaurant', 'restaurant')
-            .leftJoinAndSelect('offer.seller', 'seller')
+            .leftJoinAndSelect('offer.seller', 'seller', 'seller.id = :id', { id: sellerId })
             .leftJoinAndSelect('offer.categories', 'category')
-            .where('seller.id = :id', { id: sellerId })
+            .leftJoinAndSelect('offer.images', 'images')
+            .leftJoinAndSelect('offer.characteristics', 'characteristics')
+            .where(`(offer.name LIKE :offerName OR restaurant.name LIKE :restaurantName)`, {
+                offerName: `%${searchCriteria.name}%`,
+                restaurantName: `%${searchCriteria.restaurantName}%`
+            });
 
-        if (searchCriteria.categories) {
-            query.andWhere(`"category"."name" IN (:...categories)`, {
-                categories: searchCriteria.categories
+        if (searchCriteria.categories.length) {
+            query.andWhere(`category.name IN (:...categoriesNames)`, {
+                categoriesNames: searchCriteria.categories
             });
         }
-
-        query.andWhere(`
-            offer.name LIKE :offerName OR
-            restaurant.name LIKE :restaurantName`, {
-            offerName: searchCriteria.name,
-            restaurantName: searchCriteria.restaurantName
-        });
 
         const offers = await query
             .skip(searchCriteria.currentPage * searchCriteria.perPage)
