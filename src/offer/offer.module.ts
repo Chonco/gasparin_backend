@@ -11,6 +11,8 @@ import { OfferImagesService } from './services/offer-images.service';
 import { OfferCategoriesService } from './services/offer-categories.service';
 import { OfferCharacteristicsService } from './services/offer-characteristics.service';
 import { OfferCategoriesController } from './controllers/offer-categories.controller';
+import { OrderController } from './controllers/order.controller';
+import { OrderService } from './services/order.service';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { OfferCategoriesController } from './controllers/offer-categories.contro
         OfferCharacteristic
       ])
   ],
-  providers: [OfferService, OfferImagesService, OfferCategoriesService, OfferCharacteristicsService],
-  controllers: [OfferController, OfferCategoriesController]
+  providers: [OfferService, OfferImagesService, OfferCategoriesService, OfferCharacteristicsService, OrderService],
+  controllers: [OfferController, OfferCategoriesController, OrderController]
 })
 export class OfferModule { }

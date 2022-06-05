@@ -170,6 +170,12 @@ export class OfferService {
         return offerOutputs;
     }
 
+    async getOfferById(id: number): Promise<Offer> {
+        return await this.dataSource
+            .getRepository(Offer)
+            .findOneBy({ id });
+    }
+
     async deleteById(id: number) {
         await this.dataSource.getRepository(Offer)
             .delete({ id });
