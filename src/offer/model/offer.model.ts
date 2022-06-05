@@ -48,5 +48,5 @@ export class Offer {
         offerCharacteristic => offerCharacteristic.offer,
         { eager: true }
     )
-    caracteristics: OfferCharacteristic[]
+    characteristics: OfferCharacteristic[]
 }

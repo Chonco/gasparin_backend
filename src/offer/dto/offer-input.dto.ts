@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 import { ArrayMinSize, IsArray, IsDate, IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, Min, ValidateNested, } from "class-validator";
 
-class Characteristic {
+export class Characteristic {
     @IsNotEmpty()
     key: string;
 

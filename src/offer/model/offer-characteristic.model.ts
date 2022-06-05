@@ -12,6 +12,6 @@ export class OfferCharacteristic {
     @Column()
     value: string;
 
-    @ManyToOne(() => Offer, offer => offer.caracteristics)
+    @ManyToOne(() => Offer, offer => offer.characteristics)
     offer: Offer;
 }
