@@ -13,6 +13,7 @@ import { OfferCharacteristicsService } from './services/offer-characteristics.se
 import { OfferCategoriesController } from './controllers/offer-categories.controller';
 import { OrderController } from './controllers/order.controller';
 import { OrderService } from './services/order.service';
+import { Order } from './model/order.model';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { OrderService } from './services/order.service';
         Offer,
         OfferImage,
         OfferCategory,
-        OfferCharacteristic
+        OfferCharacteristic,
+        Order
       ])
   ],
   providers: [OfferService, OfferImagesService, OfferCategoriesService, OfferCharacteristicsService, OrderService],

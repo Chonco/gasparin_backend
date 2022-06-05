@@ -65,6 +65,10 @@ export class Offer {
     @Column({ default: false, select: false })
     offerAccepted: boolean;
 
-    @OneToOne(() => Order, {nullable: true})
+    @OneToOne(
+        () => Order,
+        order => order.offer,
+        { nullable: true }
+    )
     order: Order;
 }

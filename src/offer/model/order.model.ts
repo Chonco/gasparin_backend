@@ -21,7 +21,11 @@ export class Order {
     @Column()
     deliveryDate: Date;
 
-    @OneToOne(() => Offer)
+    @OneToOne(
+        () => Offer,
+        offer => offer.order,
+        { nullable: false }
+    )
     @JoinTable()
     offer: Offer;
 }
