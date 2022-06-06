@@ -5,13 +5,15 @@ import {
     PrimaryGeneratedColumn,
     ManyToMany,
     JoinTable,
-    ManyToOne
+    ManyToOne,
+    OneToOne
 } from 'typeorm';
 import { OfferImage } from "./offer-images.model";
 import { OfferCategory } from './offer-category.model';
 import { OfferCharacteristic } from './offer-characteristic.model';
 import { User } from '../../user/models/user.model';
 import { Index } from 'typeorm';
+import { Order } from './order.model';
 
 @Entity()
 @Index('offer_indexes', ['id', 'name'])
@@ -59,4 +61,14 @@ export class Offer {
         { eager: true }
     )
     characteristics: OfferCharacteristic[]
+
+    @Column({ default: false, select: false })
+    offerAccepted: boolean;
+
+    @OneToOne(
+        () => Order,
+        order => order.offer,
+        { nullable: true }
+    )
+    order: Order;
 }

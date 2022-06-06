@@ -1,4 +1,4 @@
-import { ArrayNotEmpty, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { ArrayNotEmpty, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 
 export class OfferSearchInput {
     @IsOptional()
@@ -24,4 +24,8 @@ export class OfferSearchInput {
     @IsInt()
     @Min(0)
     perPage: number;
+
+    @IsOptional()
+    @IsBoolean()
+    openOffers: boolean = false;
 }
