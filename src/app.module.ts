@@ -7,11 +7,12 @@ import { SharedModule } from './shared/shared.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { OfferModule } from './offer/offer.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [SharedModule, ConfigModule.forRoot({
     load: [configuration]
-  }), UserModule, AuthModule, OfferModule],
+  }), UserModule, AuthModule, OfferModule, ReviewModule],
   controllers: [AppController],
   providers: [AppService],
 })
