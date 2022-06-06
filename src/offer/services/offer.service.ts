@@ -88,24 +88,23 @@ export class OfferService {
             .leftJoinAndSelect('offer.seller', 'seller')
             .leftJoinAndSelect('offer.categories', 'category')
             .leftJoinAndSelect('offer.images', 'image')
-            .leftJoinAndSelect('offer.characteristics', 'characteristic');
-
-        if (searchCriteria.openOffers) {
-            query.leftJoinAndSelect('offer.order', 'order');
-        }
+            .leftJoinAndSelect('offer.characteristics', 'characteristic')
+            .leftJoinAndSelect('offer.order', 'order');
 
         query
-            .where('offer.offerAccepted = :openOffers', { openOffers: searchCriteria.openOffers })
-            .andWhere(`(offer.name LIKE :offerName OR seller.name LIKE :sellerName)`, {
+            .where('offer.offerAccepted = :openOffers', { openOffers: !searchCriteria.openOffers })
+            .andWhere(`(offer.name LIKE :offerName AND seller.name LIKE :sellerName)`, {
                 offerName: `%${searchCriteria.name}%`,
                 sellerName: `%${searchCriteria.sellerName}%`
             });
 
-        if (searchCriteria.categories) {
+        if (searchCriteria.categories.length) {
             query.andWhere(`category.name IN (:...categoriesNames)`, {
                 categoriesNames: searchCriteria.categories
             });
         }
+
+        console.log(query.getQuery());
 
         const offers = await query
             .skip(searchCriteria.currentPage * searchCriteria.perPage)
@@ -125,15 +124,12 @@ export class OfferService {
             .leftJoinAndSelect('offer.seller', 'seller', 'seller.id = :id', { id: sellerId })
             .leftJoinAndSelect('offer.categories', 'category')
             .leftJoinAndSelect('offer.images', 'images')
-            .leftJoinAndSelect('offer.characteristics', 'characteristics');
-
-        if (searchCriteria.openOffers) {
-            query.leftJoinAndSelect('offer.order', 'order');
-        }
+            .leftJoinAndSelect('offer.characteristics', 'characteristics')
+            .leftJoinAndSelect('offer.order', 'order');
 
         query
-            .where('offer.offerAccepted = :openOffers', { openOffers: searchCriteria.openOffers })
-            .andWhere(`(offer.name LIKE :offerName OR restaurant.name LIKE :restaurantName)`, {
+            .where('offer.offerAccepted = :openOffers', { openOffers: !searchCriteria.openOffers })
+            .andWhere(`(offer.name LIKE :offerName AND restaurant.name LIKE :restaurantName)`, {
                 offerName: `%${searchCriteria.name}%`,
                 restaurantName: `%${searchCriteria.restaurantName}%`
             });

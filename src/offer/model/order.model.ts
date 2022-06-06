@@ -1,7 +1,7 @@
 import {
     Column,
     Entity,
-    JoinTable,
+    JoinColumn,
     OneToOne,
     PrimaryGeneratedColumn
 } from "typeorm";
@@ -21,11 +21,7 @@ export class Order {
     @Column()
     deliveryDate: Date;
 
-    @OneToOne(
-        () => Offer,
-        offer => offer.order,
-        { nullable: false }
-    )
-    @JoinTable()
+    @OneToOne(() => Offer, offer => offer.order)
+    @JoinColumn()
     offer: Offer;
 }
