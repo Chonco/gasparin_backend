@@ -1,7 +1,8 @@
-import { Column, Entity, Index, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { UserTypeEnum } from "../constants/user-type.enum";
 import { FoodType } from './food-type.model';
 import { Offer } from '../../offer/model/offer.model';
+import { Review } from '../../review/model/review.model';
 
 @Entity()
 @Index('user_indexes', ['id', 'email'])
@@ -42,4 +43,10 @@ export class User {
 
     @OneToMany(() => Offer, offer => offer.seller)
     offeredOffer: Offer;
+
+    @OneToMany(() => Review, review => review.from)
+    reviewsFrom: Review[];
+
+    @OneToMany(() => Review, review => review.to)
+    reviewsTo: Review[];
 }
