@@ -1,4 +1,4 @@
-import { Column, Double, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { User } from '../../user/models/user.model';
 
 @Entity()
@@ -12,12 +12,12 @@ export class Review {
     @Column()
     body: string;
 
-    @Column()
-    score: Double;
+    @Column("double")
+    score: number;
 
-    @OneToMany(() => User, user => user.reviewsFrom)
+    @ManyToOne(() => User, user => user.reviewsFrom)
     from: User;
 
-    @OneToMany(() => User, user => user.reviewsTo)
+    @ManyToOne(() => User, user => user.reviewsTo)
     to: User;
 } 
