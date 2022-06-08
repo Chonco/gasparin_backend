@@ -67,7 +67,8 @@ export class AuthService {
             accessToken: this.jwtService.sign(
                 { ...payload, ...subject },
                 { expiresIn: `${this.configService.get('jwt.expireTimeSecret')}s` }
-            )
+            ),
+            userType: user.userType
         }
     }
 }
