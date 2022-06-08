@@ -84,7 +84,7 @@ export class OfferService {
     ): Promise<OfferOutput[]> {
         const query = this.dataSource.getRepository(Offer)
             .createQueryBuilder('offer')
-            .leftJoinAndSelect('offer.restaurant', 'restaurant', 'restaurant.id = :id', { id: restaurantId })
+            .innerJoinAndSelect('offer.restaurant', 'restaurant', 'restaurant.id = :id', { id: restaurantId })
             .leftJoinAndSelect('offer.seller', 'seller')
             .leftJoinAndSelect('offer.categories', 'category')
             .leftJoinAndSelect('offer.images', 'image')
@@ -104,8 +104,6 @@ export class OfferService {
             });
         }
 
-        console.log(query.getQuery());
-
         const offers = await query
             .skip(searchCriteria.currentPage * searchCriteria.perPage)
             .take(searchCriteria.perPage)
@@ -121,7 +119,7 @@ export class OfferService {
         const query = this.dataSource.getRepository(Offer)
             .createQueryBuilder('offer')
             .leftJoinAndSelect('offer.restaurant', 'restaurant')
-            .leftJoinAndSelect('offer.seller', 'seller', 'seller.id = :id', { id: sellerId })
+            .innerJoinAndSelect('offer.seller', 'seller', 'seller.id = :id', { id: sellerId })
             .leftJoinAndSelect('offer.categories', 'category')
             .leftJoinAndSelect('offer.images', 'images')
             .leftJoinAndSelect('offer.characteristics', 'characteristics')
