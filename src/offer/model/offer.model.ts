@@ -10,10 +10,10 @@ import {
 } from 'typeorm';
 import { OfferImage } from "./offer-images.model";
 import { OfferCategory } from './offer-category.model';
-import { OfferCharacteristic } from './offer-characteristic.model';
 import { User } from '../../user/models/user.model';
 import { Index } from 'typeorm';
 import { Order } from './order.model';
+import { OfferStatus } from '../constants/OfferStatus.enum';
 
 @Entity()
 @Index('offer_indexes', ['id', 'name'])
@@ -55,15 +55,11 @@ export class Offer {
     @JoinTable()
     categories: OfferCategory[];
 
-    @OneToMany(
-        () => OfferCharacteristic,
-        offerCharacteristic => offerCharacteristic.offer,
-        { eager: true }
-    )
-    characteristics: OfferCharacteristic[]
+    @Column()
+    description: string;
 
-    @Column({ default: false, select: false })
-    offerAccepted: boolean;
+    @Column({ type: 'enum', enum: OfferStatus })
+    status: OfferStatus
 
     @OneToOne(
         () => Order,

@@ -1,4 +1,3 @@
-import { OfferCharacteristic } from "../model/offer-characteristic.model";
 import { OfferCategory } from "../model/offer-category.model";
 import { OfferImage } from "../model/offer-images.model";
 import { UserOutputDTO } from '../../user/dtos/user-output.dto';
@@ -12,7 +11,7 @@ export class OfferOutput {
     productionDate: Date;
     images: OfferImage[];
     categories: OfferCategory[];
-    characteristics: OfferCharacteristic[];
+    description: string;
     restaurant: UserOutputDTO;
     seller: UserOutputDTO;
     order?: Order;
@@ -30,7 +29,7 @@ export class OfferOutput {
         output.productionDate = offer.productionDate;
         output.images = offer.images;
         output.categories = offer.categories;
-        output.characteristics = offer.characteristics;
+        output.description = offer.description;
         output.restaurant = restaurant;
         output.seller = seller;
         output.order = offer.order

@@ -1,13 +1,14 @@
-import { Type } from "class-transformer";
-import { ArrayMinSize, IsArray, IsDate, IsDateString, IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, Min, ValidateNested, } from "class-validator";
-
-export class Characteristic {
-    @IsNotEmpty()
-    key: string;
-
-    @IsNotEmpty()
-    value: string;
-}
+import {
+    ArrayMinSize,
+    IsArray,
+    IsDateString,
+    IsInt,
+    IsNotEmpty,
+    IsNumber,
+    IsPositive,
+    IsString,
+    Min
+} from "class-validator";
 
 export class OfferInput {
     @IsNotEmpty()
@@ -30,10 +31,8 @@ export class OfferInput {
     @ArrayMinSize(1)
     categories: string[];
 
-    @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => Characteristic)
-    characteristics: Characteristic[];
+    @IsNotEmpty()
+    description: string
 
     @IsInt()
     @IsPositive()
