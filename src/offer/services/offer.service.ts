@@ -107,14 +107,15 @@ export class OfferService {
             .leftJoinAndSelect('offer.categories', 'category')
             .leftJoinAndSelect('offer.images', 'image')
             .leftJoinAndSelect('offer.characteristics', 'characteristic')
-            .leftJoinAndSelect('offer.order', 'order');
-
-        query
-            .where('offer.offerAccepted = :openOffers', { openOffers: !searchCriteria.openOffers })
-            .andWhere(`(offer.name LIKE :offerName AND seller.name LIKE :sellerName)`, {
+            .leftJoinAndSelect('offer.order', 'order')
+            .where(`(offer.name LIKE :offerName AND seller.name LIKE :sellerName)`, {
                 offerName: `%${searchCriteria.name}%`,
                 sellerName: `%${searchCriteria.sellerName}%`
             });
+
+        if (searchCriteria.status) {
+            query.andWhere('offer.status = :status', { status: searchCriteria.status })
+        }
 
         if (searchCriteria.categories.length) {
             query.andWhere(`category.name IN (:...categoriesNames)`, {
@@ -141,14 +142,15 @@ export class OfferService {
             .leftJoinAndSelect('offer.categories', 'category')
             .leftJoinAndSelect('offer.images', 'images')
             .leftJoinAndSelect('offer.characteristics', 'characteristics')
-            .leftJoinAndSelect('offer.order', 'order');
-
-        query
-            .where('offer.offerAccepted = :openOffers', { openOffers: !searchCriteria.openOffers })
-            .andWhere(`(offer.name LIKE :offerName AND restaurant.name LIKE :restaurantName)`, {
+            .leftJoinAndSelect('offer.order', 'order')
+            .where(`(offer.name LIKE :offerName AND restaurant.name LIKE :restaurantName)`, {
                 offerName: `%${searchCriteria.name}%`,
                 restaurantName: `%${searchCriteria.restaurantName}%`
             });
+
+        if (searchCriteria.status) {
+            query.andWhere('offer.status = :status', { status: searchCriteria.status })
+        }
 
         if (searchCriteria.categories.length) {
             query.andWhere(`category.name IN (:...categoriesNames)`, {

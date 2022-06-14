@@ -1,4 +1,5 @@
-import { ArrayNotEmpty, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { ArrayNotEmpty, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import { OfferStatus } from '../constants/OfferStatus.enum';
 
 export class OfferSearchInput {
     @IsOptional()
@@ -17,6 +18,10 @@ export class OfferSearchInput {
     @IsString({ each: true })
     categories: string[] = [];
 
+    @IsOptional()
+    @IsEnum(OfferStatus)
+    status: OfferStatus;
+
     @IsInt()
     @Min(0)
     currentPage: number = 0;
@@ -24,8 +29,4 @@ export class OfferSearchInput {
     @IsInt()
     @Min(0)
     perPage: number;
-
-    @IsOptional()
-    @IsBoolean()
-    openOffers: boolean = false;
 }
