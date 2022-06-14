@@ -5,11 +5,9 @@ import { Offer } from './model/offer.model';
 import { OfferImage } from './model/offer-images.model';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OfferCategory } from './model/offer-category.model';
-import { OfferCharacteristic } from './model/offer-characteristic.model';
 import { UserModule } from '../user/user.module';
 import { OfferImagesService } from './services/offer-images.service';
 import { OfferCategoriesService } from './services/offer-categories.service';
-import { OfferCharacteristicsService } from './services/offer-characteristics.service';
 import { OfferCategoriesController } from './controllers/offer-categories.controller';
 import { OrderController } from './controllers/order.controller';
 import { OrderService } from './services/order.service';
@@ -23,11 +21,15 @@ import { Order } from './model/order.model';
         Offer,
         OfferImage,
         OfferCategory,
-        OfferCharacteristic,
         Order
       ])
   ],
-  providers: [OfferService, OfferImagesService, OfferCategoriesService, OfferCharacteristicsService, OrderService],
+  providers: [
+    OfferService,
+    OfferImagesService,
+    OfferCategoriesService,
+    OrderService
+  ],
   controllers: [OfferController, OfferCategoriesController, OrderController]
 })
 export class OfferModule { }

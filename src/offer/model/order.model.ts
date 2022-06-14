@@ -1,5 +1,6 @@
 import {
     Column,
+    CreateDateColumn,
     Entity,
     JoinColumn,
     OneToOne,
@@ -15,13 +16,10 @@ export class Order {
     @Column()
     quantity: number;
 
-    @Column()
-    orderDate: Date;
-
-    @Column()
-    deliveryDate: Date;
-
     @OneToOne(() => Offer, offer => offer.order)
     @JoinColumn()
     offer: Offer;
+
+    @CreateDateColumn()
+    createdAt: Date;
 }

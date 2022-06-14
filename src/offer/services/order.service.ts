@@ -6,6 +6,7 @@ import { OrderInput } from '../dto/order-input.dto';
 import { Order } from '../model/order.model';
 import { OfferService } from './offer.service';
 import { Offer } from '../model/offer.model';
+import { OfferStatus } from '../constants/OfferStatus.enum';
 
 @Injectable()
 export class OrderService {
@@ -28,18 +29,12 @@ export class OrderService {
         const orderToSave = new Order();
         orderToSave.quantity = orderInput.quantity;
         orderToSave.offer = offer;
-        orderToSave.orderDate = new Date();
-        orderToSave.deliveryDate = new Date(
-            orderToSave.orderDate.getFullYear(),
-            orderToSave.orderDate.getMonth(),
-            orderToSave.orderDate.getDate() + 15
-        );
 
         const order = await this.dataSource
             .getRepository(Order)
             .save(orderToSave);
 
-        offer.offerAccepted = true;
+        offer.status = OfferStatus.ACCEPTED;
         await this.dataSource.getRepository(Offer).save(offer);
 
         return order;

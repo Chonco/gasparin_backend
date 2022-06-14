@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { OfferInput } from '../dto/offer-input.dto';
 import { OfferOutput } from '../dto/offer-output.dto';
@@ -7,10 +7,11 @@ import { Offer } from '../model/offer.model';
 import { UserTypeEnum } from 'src/user/constants/user-type.enum';
 import { OfferCategoriesService } from './offer-categories.service';
 import { OfferImagesService } from './offer-images.service';
-import { OfferCharacteristicsService } from './offer-characteristics.service';
 import { UserOutputDTO } from 'src/user/dtos/user-output.dto';
 import { UserAccessTokenClaims } from '../../auth/dtos/user-token-claims.dto';
 import { OfferSearchInput } from '../dto/offer-search-input.dto';
+import { OfferStatus } from '../constants/OfferStatus.enum';
+import { OfferStatusUpdate } from '../dto/offer-status-update.dto';
 
 @Injectable()
 export class OfferService {
@@ -19,7 +20,6 @@ export class OfferService {
         private userService: UserService,
         private offerCategoriesService: OfferCategoriesService,
         private offerImagesService: OfferImagesService,
-        private offerCharacteristicsService: OfferCharacteristicsService
     ) { }
 
     async save(
@@ -49,15 +49,15 @@ export class OfferService {
         offer.name = input.name;
         offer.price = input.price;
         offer.productionDate = input.productionDate;
+        offer.description = input.description
         offer.categories = offerCategories;
+        offer.status = OfferStatus.OFFERED;
 
         const offerSaved = await this.dataSource.getRepository(Offer)
             .save(offer);
 
         await this.offerImagesService
             .saveImagesToOffer(offerSaved, input.images);
-        await this.offerCharacteristicsService
-            .saveCharacteristicsToOffer(offerSaved, input.characteristics);
 
         return OfferOutput.fromOffer(
             (
@@ -67,6 +67,24 @@ export class OfferService {
             (await UserOutputDTO.fromUser(restaurant)),
             (await UserOutputDTO.fromUser(seller))
         );
+    }
+
+    async updateOfferStatus(
+        userContext: UserAccessTokenClaims,
+        input: OfferStatusUpdate
+    ) {
+        if (input.status == OfferStatus.CANCELED) {
+            if (userContext.userType != UserTypeEnum.SELLER) {
+                throw new UnauthorizedException("Only a seller can cancel an offer.");
+            }
+        } else if (userContext.userType != UserTypeEnum.RESTAURANT) {
+            throw new UnauthorizedException("Only a restaurant can update an offer.");
+        }
+
+        const repository = this.dataSource.getRepository(Offer);
+        const offer = await repository.findOneBy({ id: input.offerId })
+        offer.status = input.status;
+        await repository.save(offer);
     }
 
     async getFilteredOffers(
